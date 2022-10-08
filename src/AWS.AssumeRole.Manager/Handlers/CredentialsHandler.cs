@@ -8,10 +8,10 @@ namespace AWS.Helper.AssumeRole
         private IDateTimeProvider _dateTimeProvider;
         private readonly int _credentialsDurationSeconds;
 
-        private static CredentialsContainer? _credentialsContainer;
-        private static readonly object _lock = new object();
+        private CredentialsContainer? _credentialsContainer;
+        private readonly object _lock = new object();
 
-        private Func<AWSCredentials> GetAwsCredentials;
+        private readonly Func<AWSCredentials> GetAwsCredentials;
 
         public CredentialsHandler(
             Func<AWSCredentials> getAwsCredentials,

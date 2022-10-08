@@ -1,17 +1,14 @@
-﻿using Amazon.Runtime;
-using Amazon.SecurityToken;
+﻿using Amazon.SecurityToken;
 using Amazon.SecurityToken.Model;
 using System.Threading.Tasks;
 
 namespace AWS.Helper.AssumeRole
 {
-    internal sealed class AssumeRoleLogic
+    internal sealed class AssumeRoleService
     {
         public static async Task<Credentials> AssumeRoleAsync(
-            AWSCredentials userCredentials, string roleARN, string sessionName, int durationSeconds)
+            AmazonSecurityTokenServiceClient stsClient, string roleARN, string sessionName, int durationSeconds)
         {
-            var stsClient = new AmazonSecurityTokenServiceClient(userCredentials);
-
             var request = new AssumeRoleRequest
             {
                 DurationSeconds = durationSeconds,

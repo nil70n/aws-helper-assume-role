@@ -1,4 +1,5 @@
 ﻿using Amazon.Runtime;
+using Amazon.SecurityToken;
 using System.Threading.Tasks;
 
 namespace AWS.Helper.AssumeRole
@@ -7,8 +8,8 @@ namespace AWS.Helper.AssumeRole
     {
         private const string DEFAULT_SESSION_NAME = "aws-temporary-session";
 
-        private readonly AWSCredentials _userCredentials;
         private readonly CredentialsHandler _credentialsHandler;
+        private readonly AmazonSecurityTokenServiceClient _securityTokenServiceClient;
         private readonly IDateTimeProvider _dateTimeProvider;
 
         public AssumeRoleHelper(
@@ -33,9 +34,9 @@ namespace AWS.Helper.AssumeRole
             RoleArn = roleArn;
             SessionName = sessionName ?? DEFAULT_SESSION_NAME;
             DurationSeconds = durationSeconds;
-            _userCredentials = userCredentials;
             _dateTimeProvider = dateTimeProvider ?? new DateTimeProvider();
             _credentialsHandler = new CredentialsHandler(AssumeRole, DurationSeconds, _dateTimeProvider);
+            _securityTokenServiceClient = new AmazonSecurityTokenServiceClient(userCredentials);
         }
 
         private string RoleArn { get; set; }
@@ -44,7 +45,7 @@ namespace AWS.Helper.AssumeRole
 
         private AWSCredentials AssumeRole()
         {
-            var credentialsTask = AssumeRoleLogic.AssumeRoleAsync(_userCredentials, RoleArn, SessionName, DurationSeconds);
+            var credentialsTask = AssumeRoleService.AssumeRoleAsync(_securityTokenServiceClient, RoleArn, SessionName, DurationSeconds);
 
             Task.WaitAll(credentialsTask);
 
