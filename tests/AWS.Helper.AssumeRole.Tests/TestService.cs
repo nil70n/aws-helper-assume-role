@@ -1,18 +1,19 @@
 ﻿using Amazon.IdentityManagement;
 using Amazon.IdentityManagement.Model;
+using Amazon.Runtime;
 using System.Threading.Tasks;
 
-namespace AWS.Helper.AssumeRole
+namespace AWS.Helper.AssumeRole.Tests
 {
     internal sealed class TestService
     {
-        private const string _policyDocument = 
-            "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"{0}\"},\"Action\":\"sts:AssumeRole\"}]}";
+        private readonly AmazonIdentityManagementServiceClient _client;
 
-        private const string _assumeRolePolicyDocument =
-            "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:ListAllMyBuckets\"],\"Effect\":\"Allow\",\"Resource\":\"*\"}]}";
-
-        private readonly AmazonIdentityManagementServiceClient _client = new AmazonIdentityManagementServiceClient();
+        public TestService()
+        {
+            var environmentCredentials = new EnvironmentVariablesAWSCredentials().GetCredentials();
+            _client = new AmazonIdentityManagementServiceClient(environmentCredentials.AccessKey, environmentCredentials.SecretKey);
+        }
 
         #region Creation of required objects for testing
         public async Task<User> CreateUserAsync(string userName)
@@ -100,12 +101,5 @@ namespace AWS.Helper.AssumeRole
                 UserName = userName,
             });
         }
-
-        //public static async Task<List<S3Bucket>> ListMyBucketAsync(AmazonS3Client client)
-        //{
-        //    var response = await client.ListBucketsAsync();
-
-        //    return response.Buckets;
-        //}
     }
 }

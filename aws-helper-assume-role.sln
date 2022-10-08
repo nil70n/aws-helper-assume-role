@@ -7,9 +7,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6DB21003-CAB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A81EF2C5-F3C3-40D4-8B9F-355C785CC5F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.Helper.AssumeRole", "src\AWS.Helper.AssumeRole\AWS.Helper.AssumeRole.csproj", "{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AWS.Helper.AssumeRole", "src\AWS.Helper.AssumeRole\AWS.Helper.AssumeRole.csproj", "{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.Helper.AssumeRole.Tests", "tests\AWS.Helper.AssumeRole.Tests\AWS.Helper.AssumeRole.Tests.csproj", "{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AWS.Helper.AssumeRole.Tests", "tests\AWS.Helper.AssumeRole.Tests\AWS.Helper.AssumeRole.Tests.csproj", "{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAFDB493-B4D6-47BF-AA4D-CE15909615EB}"
+	ProjectSection(SolutionItems) = preProject
+		.runsettings = .runsettings
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
