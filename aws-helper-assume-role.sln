@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6DB21003-CAB9-4757-AFCC-AA1FB6DDCD0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A81EF2C5-F3C3-40D4-8B9F-355C785CC5F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.Helper.AssumeRole", "src\AWS.AssumeRole.Manager\AWS.Helper.AssumeRole.csproj", "{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS.Helper.AssumeRole.Tests", "tests\AWS.AssumeRole.Credentials.Manager.Tests\AWS.Helper.AssumeRole.Tests.csproj", "{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6A86CCDE-C081-41A8-8C2B-7BD5AE3F1185} = {6DB21003-CAB9-4757-AFCC-AA1FB6DDCD0D}
+		{0EC1FD97-0AF6-42C3-89C0-B1EF26F66E96} = {A81EF2C5-F3C3-40D4-8B9F-355C785CC5F4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0707A5AA-9B65-46F9-9E2B-7F6C3E236210}
+	EndGlobalSection
+EndGlobal

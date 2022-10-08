@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <EnvironmentVariables>
+		<!-- Uncomment and set your AWS credentials information below to override your AWS profile data. 
+		     The environment user in the test execution must have IAM permission to create users, roles and policies. -->
+		<!--
+		<AWS_ACCESS_KEY_ID></AWS_ACCESS_KEY_ID>
+		<AWS_SECRET_ACCESS_KEY></AWS_SECRET_ACCESS_KEY>
+		<AWS_DEFAULT_REGION></AWS_DEFAULT_REGION>
+		-->
+    </EnvironmentVariables>
+  </RunConfiguration>
+</RunSettings>
