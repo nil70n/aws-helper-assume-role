@@ -1,72 +1,79 @@
 ﻿using Amazon;
-using Amazon.IdentityManagement.Model;
 using Amazon.S3;
+using Moq;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace AWS.Helper.AssumeRole.Tests
 {
-    public class AssumeRoleHelperTests : IDisposable
+    public class AssumeRoleHelperTests : IClassFixture<AWSArtifactsFixture>
     {
-        private const int INTERVAL_SECONDS = 15;
+        private readonly AWSArtifactsFixture _fixture;
+        private Mock<IDateTimeProvider> dateTimeProviderMock;
 
-        private const string USER_NAME = "test-user";
-        private const string ROLE_NAME = "allow-assume-role";
-        private const string S3_POLICY_NAME = "s3-list-buckets-policy";
-        private const string POLICY_DOCUMENT = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:ListAllMyBuckets\"],\"Effect\":\"Allow\",\"Resource\":\"*\"}]}";
-
-        private string GetAssumeRolePolicyDocument (string userArn) => "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{" +
-            $"\"AWS\":\"{ userArn }\""+
-            "},\"Action\":\"sts:AssumeRole\"}]}";
-
-        private readonly TestService _testService;
-
-        private User _user;
-        private AccessKey _accessKey;
-        private Role _role;
-        private ManagedPolicy _policy;
-
-        public AssumeRoleHelperTests()
+        public AssumeRoleHelperTests(AWSArtifactsFixture fixture)
         {
-            _testService = new TestService();
+            _fixture = fixture;
+            dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
-            Task.WaitAll(SetUpAsync());
-        }
-
-        private async Task SetUpAsync()
-        {
-            _user = await _testService.CreateUserAsync(USER_NAME);
-            _accessKey = await _testService.CreateAccessKeyAsync(USER_NAME);
-
-            // Waiting for the user be available
-            Thread.Sleep(INTERVAL_SECONDS * 1000);
-
-            _role = await _testService.CreateRoleAsync(ROLE_NAME, GetAssumeRolePolicyDocument(_user.Arn));
-            _policy = await _testService.CreatePolicyAsync(S3_POLICY_NAME, POLICY_DOCUMENT);
-
-            // Waiting for the policy be available
-            Thread.Sleep(INTERVAL_SECONDS * 1000);
-
-            await _testService.AttachRoleAsync(_policy.Arn, ROLE_NAME);
-
-            // Waiting for the policy be attached
-            Thread.Sleep(INTERVAL_SECONDS * 1000);
+            dateTimeProviderMock.Setup(s => s.UtcNow).Returns(DateTimeOffset.UtcNow);
         }
 
         [Fact]
-        public async Task Action_ThrowsError_WhenUserDoesnAssumeRole()
+        public async Task Action_Fails_WhenUserDoesntAssumeRole()
         {
-            var s3Client = new AmazonS3Client(_accessKey.AccessKeyId, _accessKey.SecretAccessKey, RegionEndpoint.USEast1);
+            var s3Client = new AmazonS3Client(
+                _fixture.Artifacts.UserCredentials, 
+                RegionEndpoint.USEast1);
 
             await Assert.ThrowsAsync<AmazonS3Exception>(async () => await s3Client.ListBucketsAsync());
         }
 
-        public void Dispose()
+        [Fact]
+        public async Task Action_Success_WhenUserAssumeRole()
         {
-            Task.WaitAll(
-                _testService.DeleteResourcesAsync(_accessKey.AccessKeyId, USER_NAME, _policy.Arn, ROLE_NAME)); 
+            var helper = new AssumeRoleHelper(_fixture.Artifacts.UserCredentials, _fixture.Artifacts.Role.Arn, dateTimeProviderMock.Object);
+
+            var assumedRoleCredentials = helper.GetAssumedRoleCredentials();
+
+            var s3Client = new AmazonS3Client(assumedRoleCredentials, RegionEndpoint.USEast1);
+
+            var exception = await Record.ExceptionAsync(async () => await s3Client.ListBucketsAsync());
+
+            Assert.Null(exception);
+        }
+
+        [Fact]
+        public void Action_RefreshCredentials_WhenFirstIsExpired()
+        {
+            var helper = new AssumeRoleHelper(_fixture.Artifacts.UserCredentials, _fixture.Artifacts.Role.Arn, dateTimeProviderMock.Object);
+
+            var firstCredentials = helper.GetAssumedRoleCredentials();
+
+            dateTimeProviderMock
+                .Setup(s => s.UtcNow)
+                .Returns(DateTimeOffset.UtcNow.AddHours(30));
+
+            var secondCredentials = helper.GetAssumedRoleCredentials();
+
+            Assert.NotEqual(firstCredentials.GetCredentials().AccessKey, secondCredentials.GetCredentials().AccessKey);
+        }
+
+        [Fact]
+        public void Action_ReuseCredentials_WhenFirstIsNotExpired()
+        {
+            var helper = new AssumeRoleHelper(_fixture.Artifacts.UserCredentials, _fixture.Artifacts.Role.Arn, dateTimeProviderMock.Object);
+
+            var firstCredentials = helper.GetAssumedRoleCredentials();
+
+            dateTimeProviderMock
+                .Setup(s => s.UtcNow)
+                .Returns(DateTimeOffset.UtcNow.AddMinutes(3));
+
+            var secondCredentials = helper.GetAssumedRoleCredentials();
+
+            Assert.Equal(firstCredentials.GetCredentials().AccessKey, secondCredentials.GetCredentials().AccessKey);
         }
     }
 }
